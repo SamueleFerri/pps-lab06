@@ -37,8 +37,9 @@ enum List[A]:
   def append(list: List[A]): List[A] =
     foldRight(list)(_ :: _)
 
-  def flatMap[B](f: A => List[B]): List[B] =
+  def flatMap[B](f: A => List[B]): List[B] = {
     foldRight(Nil())(f(_) append _)
+  }
 
   def filter(predicate: A => Boolean): List[A] = flatMap(a => if predicate(a) then a :: Nil() else Nil())
 
@@ -57,12 +58,14 @@ enum List[A]:
     this.foldLeft(0) { (acc, _) => acc + 1 }
     
   def indices(): List[Int] = 
-    this.foldLeft((0, Nil[Int]())) { (acc, _) => (acc._1 + 1, acc._2.append(acc._1 :: Nil[Int]())) }._2
+    this.foldLeft((0, Nil[Int]())) { case ((i, list), _) => (i + 1, list.append(i :: Nil[Int]())) }._2
 
   def zipWithIndex: List[(A, Int)] =
-    this.foldRight((this.length() - 1, Nil[(A, Int)]())) { (element, acc) => (acc._1 - 1, (element, acc._1) :: acc._2)}._2 
+    this.foldRight((this.length() - 1, Nil[(A, Int)]())) { (element, acc) => (acc._1 - 1, (element, acc._1) :: acc._2) }._2 
   
-  def partition(predicate: A => Boolean): (List[A], List[A]) = ???
+  def partition(predicate: A => Boolean): (List[A], List[A]) =
+    this.foldRight((Nil[A](), Nil[A]())) { (element, acc) => if predicate(element) then (element :: acc._1, acc._2) else (acc._1, element :: acc._2) }
+    
   def span(predicate: A => Boolean): (List[A], List[A]) = ???
   def takeRight(n: Int): List[A] = ???
   def collect(predicate: PartialFunction[A, A]): List[A] = ???
