@@ -1,5 +1,7 @@
 package it.unibo.pps.ex1
 
+import scala.annotation.tailrec
+
 // List as a pure interface
 enum List[A]:
   case ::(h: A, t: List[A])
@@ -46,9 +48,12 @@ enum List[A]:
     case h :: t => t.foldLeft(h)(op)
   
   // Exercise: implement the following methods
-  def zipWithValue[B](value: B): List[(A, B)] = ???
+  def zipWithValue[B](value: B): List[(A, B)] = this match
+    case head :: tail => (head, value) :: tail.zipWithValue(value)
+    case Nil() => Nil()
+    
   def length(): Int = ???
-  def indices(): List[A] = ???
+  def indices(): List[Int] = ???
   def zipWithIndex: List[(A, Int)] = ???
   def partition(predicate: A => Boolean): (List[A], List[A]) = ???
   def span(predicate: A => Boolean): (List[A], List[A]) = ???
