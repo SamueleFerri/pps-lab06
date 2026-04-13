@@ -13,6 +13,7 @@ enum List[A]:
   def tail: Option[List[A]] = this match
     case h :: t => Some(t)
     case _ => None
+    
   def foreach(consumer: A => Unit): Unit = this match
     case h :: t => consumer(h); t.foreach(consumer)
     case _ =>
@@ -55,7 +56,23 @@ enum List[A]:
   def collect(predicate: PartialFunction[A, A]): List[A] = ???
 // Factories
 object List:
+  
+  def unzip[A, B](list: List[(A, B)]): (List[A], List[B]) = list match
+    case (left, right) :: rest => 
+      val (leftList, rightList) = unzip(rest)
+      (left :: leftList, right :: rightList)
+    case Nil() => (Nil(), Nil())
+      
+  def unzipWithFoldLeft[A, B](list: List[(A, B)]): (List[A], List[B]) =
+    list.foldLeft((Nil(), Nil())) {
+    case ((leftList, rightList), (left, right)) => (left :: leftList, right :: rightList)
+    }
 
+  def unzipWithFoldRight[A, B](list: List[(A, B)]): (List[A], List[B]) =
+    list.foldRight((Nil(), Nil())) {
+      case ((left, right), (leftList, rightList)) => (left :: leftList, right :: rightList)
+    }
+  
   def apply[A](elems: A*): List[A] =
     var list: List[A] = Nil()
     for e <- elems.reverse do list = e :: list
