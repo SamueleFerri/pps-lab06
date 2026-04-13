@@ -1,5 +1,6 @@
 package it.unibo.pps.ex1
 
+import scala.::
 import scala.annotation.tailrec
 
 // List as a pure interface
@@ -52,8 +53,12 @@ enum List[A]:
     case head :: tail => (head, value) :: tail.zipWithValue(value)
     case Nil() => Nil()
     
-  def length(): Int = ???
-  def indices(): List[Int] = ???
+  def length(): Int =
+    this.foldLeft(0) { (acc, _) => acc + 1 }
+    
+  def indices(): List[Int] = 
+    this.foldLeft((0, Nil[Int]())) { (acc, _) => (acc._1 + 1, acc._2.append(acc._1 :: Nil[Int]())) }._2
+
   def zipWithIndex: List[(A, Int)] = ???
   def partition(predicate: A => Boolean): (List[A], List[A]) = ???
   def span(predicate: A => Boolean): (List[A], List[A]) = ???
