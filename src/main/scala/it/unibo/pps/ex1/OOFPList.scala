@@ -59,7 +59,9 @@ enum List[A]:
   def indices(): List[Int] = 
     this.foldLeft((0, Nil[Int]())) { (acc, _) => (acc._1 + 1, acc._2.append(acc._1 :: Nil[Int]())) }._2
 
-  def zipWithIndex: List[(A, Int)] = ???
+  def zipWithIndex: List[(A, Int)] =
+    this.foldRight((this.length() - 1, Nil[(A, Int)]())) { (element, acc) => (acc._1 - 1, (element, acc._1) :: acc._2)}._2 
+  
   def partition(predicate: A => Boolean): (List[A], List[A]) = ???
   def span(predicate: A => Boolean): (List[A], List[A]) = ???
   def takeRight(n: Int): List[A] = ???
