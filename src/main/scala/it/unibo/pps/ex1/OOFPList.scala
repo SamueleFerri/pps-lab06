@@ -66,7 +66,19 @@ enum List[A]:
   def partition(predicate: A => Boolean): (List[A], List[A]) =
     this.foldRight((Nil[A](), Nil[A]())) { (element, acc) => if predicate(element) then (element :: acc._1, acc._2) else (acc._1, element :: acc._2) }
     
-  def span(predicate: A => Boolean): (List[A], List[A]) = ???
+  def span(predicate: A => Boolean): (List[A], List[A]) = this match
+    case head :: tail =>
+      if predicate(head) then
+        val (restL1, restL2) = tail.span(predicate)
+        (head :: restL1, restL2)
+      else
+        (Nil(), this)
+    case Nil() => (Nil(), Nil())
+
+  def spanWithFold(predicate: A => Boolean): (List[A], List[A]) =
+    this.foldRight((Nil[A](), Nil[A]())) { (element, acc) => if predicate(element) then (element :: acc._1, acc._2) else (Nil[A](), element :: acc._1.append(acc._2)) }
+    
+    
   def takeRight(n: Int): List[A] = ???
   def collect(predicate: PartialFunction[A, A]): List[A] = ???
 // Factories
