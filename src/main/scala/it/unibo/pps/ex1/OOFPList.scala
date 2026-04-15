@@ -77,9 +77,22 @@ enum List[A]:
 
   def spanWithFold(predicate: A => Boolean): (List[A], List[A]) =
     this.foldRight((Nil[A](), Nil[A]())) { (element, acc) => if predicate(element) then (element :: acc._1, acc._2) else (Nil[A](), element :: acc._1.append(acc._2)) }
-    
-    
-  def takeRight(n: Int): List[A] = ???
+
+  def takeRightSlow(n: Int): List[A] =
+    if this.length() <= n then
+      this
+    else this match
+      case _ :: tail => tail.takeRight(n)
+      case Nil() => Nil()
+
+  def takeRight(n: Int): List[A] =
+    val toDrop = this.length() - n
+    @tailrec
+    def drop(list: List[A], k: Int): List[A] = list match
+      case _ :: tail if k > 0 => drop(tail, k - 1)
+      case _ => list
+    drop(this, toDrop)
+
   def collect(predicate: PartialFunction[A, A]): List[A] = ???
 // Factories
 object List:
