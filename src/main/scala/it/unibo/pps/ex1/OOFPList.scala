@@ -93,7 +93,9 @@ enum List[A]:
       case _ => list
     drop(this, toDrop)
 
-  def collect(predicate: PartialFunction[A, A]): List[A] = ???
+  def collect(predicate: PartialFunction[A, A]): List[A] =
+    this.foldRight(Nil()) { (element, acc) => if predicate.isDefinedAt(element) then predicate(element) :: acc else acc }
+
 // Factories
 object List:
   
