@@ -93,6 +93,12 @@ enum List[A]:
       case _ => list
     drop(this, toDrop)
 
+  def takeRightWithFoldRightSlow(n: Int): List[A] =
+    this.foldRight(Nil()) { (element, acc) => if acc.length() < n then element :: acc else acc }
+
+  def takeRightWithFoldRight(n: Int): List[A] =
+    this.foldRight((0, Nil[A]())) { case (element, (k, acc)) => if k < n then (k + 1, element :: acc) else (k, acc)}._2
+
   def collect(predicate: PartialFunction[A, A]): List[A] =
     this.foldRight(Nil()) { (element, acc) => if predicate.isDefinedAt(element) then predicate(element) :: acc else acc }
 
@@ -133,5 +139,5 @@ object Test extends App:
   println(reference.partition(_ % 2 == 0)) // (List(2, 4), List(1, 3))
   println(reference.span(_ % 2 != 0)) // (List(1), List(2, 3, 4))
   println(reference.span(_ < 3)) // (List(1, 2), List(3, 4))
-  println(reference.takeRight(3)) // List(2, 3, 4)
+  println(reference.takeRightWithFoldRight(3)) // List(2, 3, 4)
   println(reference.collect { case x if x % 2 == 0 => x + 1 }) // List(3, 5)
