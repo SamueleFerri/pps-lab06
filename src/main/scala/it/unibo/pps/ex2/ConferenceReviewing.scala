@@ -35,7 +35,9 @@ class ConferenceReviewingImpl extends ConferenceReviewing:
   override def orderedScores(article: Int, question: Question): List[Int] =
     this.reviews.getOrElse(article, List.empty).map(review => review(question)).sorted()
 
-  override def averageFinalScore(article: Int): Double = ???
+  override def averageFinalScore(article: Int): Double =
+    val finalScores = orderedScores(article, Question.FINAL)
+    if finalScores.isEmpty then 0.0 else finalScores.sum.toDouble / finalScores.size
 
   override def acceptedArticles(): Set[Int] = ???
 
