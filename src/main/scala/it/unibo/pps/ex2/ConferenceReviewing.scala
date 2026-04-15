@@ -32,7 +32,8 @@ class ConferenceReviewingImpl extends ConferenceReviewing:
     ))
   }
 
-  override def orderedScores(article: Int, question: Question): List[Int] = ???
+  override def orderedScores(article: Int, question: Question): List[Int] =
+    this.reviews.getOrElse(article, List.empty).map(review => review(question)).sorted()
 
   override def averageFinalScore(article: Int): Double = ???
 
