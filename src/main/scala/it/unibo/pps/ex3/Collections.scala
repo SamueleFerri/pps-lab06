@@ -47,8 +47,15 @@ object PerformanceUtils:
   arrayBuffer.filterInPlace(element => element % 3 == 0)
   arrayBuffer.remove(0)
 
-
   /* Sets */
+  val set = (1 to 5).toSet
+  val elementFive = set(5)
+  val newSet = set ++ (6 to 10).toSet
+  val deleteSetElement = set - 2
+
+  val mutSet = scala.collection.mutable.Set(1, 2, 3)
+  mutSet.add(4)
+  mutSet -= 4
 
   /* Maps */
 
