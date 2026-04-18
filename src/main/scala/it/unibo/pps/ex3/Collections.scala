@@ -58,6 +58,22 @@ object PerformanceUtils:
   mutSet -= 4
 
   /* Maps */
+  val map = Map[String, Int](
+    "Pippo" -> 30,
+    "Pluto" -> 40
+  )
+  val getPluto = map("Pluto")
+  val newMap = map.updated("Pluto", 35)
+  val newMap2 = map + ("Pluto" -> 35)
+  val noPluto = map - "Pluto"
+
+  val mutMap = scala.collection.mutable.Map[String, Int](
+    "Pippo" -> 30,
+    "Pluto" -> 40
+  )
+  mutMap("Pluto") = 35
+  mutMap -= "Pluto"
+
 
   /* Comparison */
   import PerformanceUtils.*
