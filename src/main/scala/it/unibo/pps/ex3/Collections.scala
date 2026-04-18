@@ -17,7 +17,29 @@ object PerformanceUtils:
 
   def measure[T](expr: => T): MeasurementResults[T] = measure("")(expr)
 
-@main def checkPerformance: Unit =
+trait StringAccumulator:
+  def add(text: String): Unit
+  def getAll: Iterable[String]
+
+class ImmutableStringAccumulator extends StringAccumulator:
+  private var state: List[String] = List.empty
+
+  //:+, append. each time return a new List. O(N)
+  override def add(text: String): Unit =
+    state = state :+ text
+
+  override def getAll: Iterable[String] = state
+
+class MutableStringAccumulator extends StringAccumulator:
+  private val state: ListBuffer[String] = ListBuffer.empty
+
+  //+= add the element at the end. O(1)
+  override def add(text: String): Unit =
+    state += text
+
+  override def getAll: Iterable[String] = state
+
+@main def checkPerformance(): Unit =
 
   /* Linear sequences: List, ListBuffer */
   val list = (1 to 5).toList
@@ -80,3 +102,34 @@ object PerformanceUtils:
   val lst = (1 to 10000000).toList
   val vec = (1 to 10000000).toVector
   assert(measure("list last")(lst.last) > measure("vec last")(vec.last))
+
+  val insertions = 1 to 10000
+
+  val listTime = measure("list prepend 10k") {
+    var tempLst = List.empty[Int]
+    for i <- insertions do tempLst = i :: tempLst
+  }
+
+  val vecTime = measure("vec prepend 10k") {
+    var tempVec = Vector.empty[Int]
+    for i <- insertions do tempVec = i +: tempVec
+  }
+
+  assert(measure("list add")(2 :: lst) < measure("vec add")(2 +: vec))
+
+  val elementsToAdd = 1 to 50000
+
+  println("Benchmark Accumulator")
+
+  val immutableResult = measure("Immutable (List) Append") {
+    val immutableAcc = ImmutableStringAccumulator()
+    for i <- elementsToAdd do immutableAcc.add(s"Parola-$i")
+  }
+
+  val mutableResult = measure("Mutable (ListBuffer) Append") {
+    val mutableAcc = MutableStringAccumulator()
+    for i <- elementsToAdd do mutableAcc.add(s"Parola-$i")
+  }
+
+  assert(mutableResult < immutableResult)
+  println("ListBuffer wins over List for continuous append!")
