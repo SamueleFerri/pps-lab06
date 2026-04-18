@@ -42,6 +42,7 @@ class ConferenceReviewingImpl extends ConferenceReviewing:
   override def acceptedArticles(): Set[Int] =
     this.reviews.keySet.filter(article => averageFinalScore(article) > 5 && orderedScores(article, Question.RELEVANCE).exists(score => score >= 8))
 
-  override def sortedAcceptedArticles(): List[(Int, Double)] = ???
+  override def sortedAcceptedArticles(): List[(Int, Double)] =
+    acceptedArticles().toList.map(article => article -> averageFinalScore(article)).sortBy((_, averageScore) => averageScore)
 
   override def averageWeightedFinalScoreMap(): Map[Int, Double] = ???
