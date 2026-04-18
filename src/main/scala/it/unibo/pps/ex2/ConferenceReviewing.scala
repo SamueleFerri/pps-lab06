@@ -1,6 +1,7 @@
 package it.unibo.pps.ex2
 
 import it.unibo.pps.ex2
+import it.unibo.pps.ex2.Question.{CONFIDENCE, FINAL, RELEVANCE}
 
 enum Question:
   case RELEVANCE
@@ -45,4 +46,9 @@ class ConferenceReviewingImpl extends ConferenceReviewing:
   override def sortedAcceptedArticles(): List[(Int, Double)] =
     acceptedArticles().toList.map(article => article -> averageFinalScore(article)).sortBy((_, averageScore) => averageScore)
 
-  override def averageWeightedFinalScoreMap(): Map[Int, Double] = ???
+  override def averageWeightedFinalScoreMap(): Map[Int, Double] =
+    this.reviews.keySet.map(article => 
+      val revs = this.reviews(article)
+      val weightedSum = revs.map(review => (review(Question.FINAL).toDouble * review(Question.CONFIDENCE).toDouble) / 10).sum
+      article -> (weightedSum / revs.size)
+    ).toMap
